@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REALSELER • User Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 16px;
+      color: #1e293b;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(34, 211, 238, 0.34), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.32), transparent 28%),
+        linear-gradient(135deg, #050816, #111827 48%, #312e81);
+    }
+
+    .wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .top {
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(14px);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 950;
+      color: #4f46e5;
+    }
+
+    .badge {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.78rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.45);
+    }
+
+    h2 {
+      text-align: center;
+      color: #4f46e5;
+      margin-bottom: 8px;
+      font-size: 1.35rem;
+    }
+
+    .sub {
+      text-align: center;
+      color: #64748b;
+      font-weight: 650;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 850;
+      color: #334155;
+      margin: 12px 0 6px;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      outline: none;
+      font-size: 1rem;
+      background: #f8fafc;
+    }
+
+    input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 950;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(90deg, #4f46e5, #ec4899, #4f46e5);
+      background-size: 220% 100%;
+      animation: flow 4s ease infinite;
+      box-shadow: 0 12px 26px rgba(79,70,229,0.34);
+    }
+
+    button.secondary {
+      background: white;
+      color: #4f46e5;
+      border: 2px solid #4f46e5;
+      box-shadow: none;
+      animation: none;
+    }
+
+    @keyframes flow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .status-box {
+      display: none;
+    }
+
+    .status-pill {
+      width: fit-content;
+      margin: 0 auto 14px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-weight: 950;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-pill.verified {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-pill.rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .info {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .info b {
+      display: block;
+      color: #4f46e5;
+      font-size: 1.05rem;
+      margin-bottom: 3px;
+    }
+
+    .info span {
+      color: #64748b;
+      font-size: 0.78rem;
+      font-weight: 750;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      font-size: 0.92rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .note {
+      background: #eef2ff;
+      border: 1px solid #dbeafe;
+      color: #334155;
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.55;
+      font-weight: 650;
+      font-size: 0.9rem;
+    }
+
+    .alert {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      background: linear-gradient(135deg, #ef4444, #ec4899);
+      color: white;
+      padding: 18px 24px;
+      border-radius: 20px;
+      font-weight: 950;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+      z-index: 99;
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+    }
+
+    .alert.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      padding: 18px 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 390px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">REALSELER</div>
+      <div class="badge" id="liveBadge">Connecting...</div>
+    </div>
+
+    <div class="card">
+      <h2>User Dashboard</h2>
+      <p class="sub">Apna order status check karo. Order ID ya UTR me se koi ek enter kar sakte ho.</p>
+
+      <label>Order ID</label>
+      <input id="orderIdInput" type="text" placeholder="Example: -Nx123abc..." />
+
+      <label>12 Digit UTR</label>
+      <input id="utrInput" type="text" maxlength="12" inputmode="numeric" placeholder="Example: 123456789012" />
+
+      <button onclick="checkOrder()">Check Order Status</button>
+      <button class="secondary" onclick="openStore()">Back To Store</button>
+    </div>
+
+    <div class="card status-box" id="statusBox">
+      <div class="status-pill" id="statusPill">Pending</div>
+
+      <div class="info-grid">
+        <div class="info"><b id="qtyText">0</b><span>Quantity</span></div>
+        <div class="info"><b id="amountText">₹0</b><span>Amount</span></div>
+        <div class="info"><b id="utrText">-</b><span>UTR</span></div>
+        <div class="info"><b id="timeText">-</b><span>Order Time</span></div>
+      </div>
+
+      <div class="note" id="messageText">
+        Payment verification pending. Please wait or contact support if it takes more than 30 minutes.
+      </div>
+
+      <pre id="deliveryText"></pre>
+
+      <button id="copyBtn" onclick="copyDelivery()" style="display:none">Copy Delivery</button>
+      <button class="secondary" onclick="openWhatsApp()">Contact Support</button>
+    </div>
+
+    <div class="card">
+      <div class="note" id="policyText">
+        Replacement request valid only within policy time. Keep Order ID and UTR ready while contacting support.
+      </div>
+    </div>
+
+    <div class="footer">
+      Premium Service • Secure Order Tracking<br>
+      © 2026 REALSELER
+    </div>
+  </div>
+
+  <div class="alert" id="alertBox"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+    const CONFIG_URL = "https://tmn.sawanenter7209.workers.dev/config";
+    const STORE_URL = "https://nira.sawanenter7209.workers.dev/";
+
+    let db;
+    let whatsappNumber = "84947229295";
+    let allOrders = {};
+
+    const $ = (id) => document.getElementById(id);
+
+    async function init() {
+      try {
+        const res = await fetch(CONFIG_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("Config failed");
+
+        const firebaseConfig = await res.json();
+        const app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+
+        $("liveBadge").textContent = "Live Active";
+
+        onValue(ref(db, "settings"), (snap) => {
+          const s = snap.val() || {};
+          whatsappNumber = s.whatsappNumber || s.supportNumber || whatsappNumber;
+
+          const replacementTime = s.replacementTime || "11:05 AM";
+          $("policyText").textContent =
+            "Replacement Policy : " + replacementTime + ". Keep Order ID and UTR ready while contacting support.";
+        });
+
+        onValue(ref(db, "orders"), (snap) => {
+          allOrders = snap.val() || {};
+        });
+      } catch (err) {
+        console.error(err);
+        $("liveBadge").textContent = "Connection Failed";
+        showAlert("Server connection failed");
+      }
+    }
+
+    window.checkOrder = async function () {
+      const orderId = $("orderIdInput").value.trim();
+      const utr = $("utrInput").value.trim();
+
+      if (!orderId && !utr) {
+        return showAlert("Order ID ya UTR enter karo");
+      }
+
+      if (utr && !/^\\d{12}$/.test(utr)) {
+        return showAlert("UTR exactly 12 digits hona chahiye");
+      }
+
+      let foundOrder = null;
+
+      if (orderId) {
+        const snap = await get(ref(db, "orders/" + orderId));
+        if (snap.exists()) foundOrder = snap.val();
+      }
+
+      if (!foundOrder && utr) {
+        Object.values(allOrders).forEach((order) => {
+          if (String(order.utr || "") === utr) foundOrder = order;
+        });
+      }
+
+      if (!foundOrder) {
+        $("statusBox").style.display = "none";
+        return showAlert("Order not found");
+      }
+
+      renderOrder(foundOrder);
+    };
+
+    function renderOrder(order) {
+      $("statusBox").style.display = "block";
+
+      const status = order.status || "created";
+      $("statusPill").textContent = status.toUpperCase();
+      $("statusPill").className = "status-pill " + status;
+
+      $("qtyText").textContent = order.qty || 0;
+      $("amountText").textContent = "₹" + (order.amount || 0);
+      $("utrText").textContent = order.utr || "-";
+      $("timeText").textContent = order.time ? new Date(order.time).toLocaleString() : "-";
+
+      $("deliveryText").style.display = "none";
+      $("copyBtn").style.display = "none";
+
+      if (status === "created") {
+        $("messageText").textContent = "Order created hai. Payment submit hone ke baad verification start hoga.";
+      } else if (status === "pending") {
+        $("messageText").textContent = "Payment verification pending hai. Please wait.";
+      } else if (status === "verified") {
+        $("messageText").textContent = "Payment verified. Delivery details niche show ho rahe hain.";
+        $("deliveryText").textContent = order.deliveredText || "Delivered. Agar empty dikhe to support se contact karo.";
+        $("deliveryText").style.display = "block";
+        $("copyBtn").style.display = "block";
+      } else if (status === "rejected") {
+        $("messageText").textContent = "Payment rejected / not matched. Support ko UTR ke saath contact karo.";
+      } else {
+        $("messageText").textContent = "Current status: " + status;
+      }
+
+      window.scrollTo({ top: $("statusBox").offsetTop - 12, behavior: "smooth" });
+    }
+
+    window.copyDelivery = function () {
+      navigator.clipboard.writeText($("deliveryText").textContent)
+        .then(() => showAlert("Copied successfully"))
+        .catch(() => showAlert("Copy failed"));
+    };
+
+    window.openWhatsApp = function () {
+      window.open(`https://wa.me/${whatsappNumber}?text=Hello REALSELER Support, mujhe order status help chahiye.`, "_blank");
+    };
+
+    window.openStore = function () {
+      window.location.href = STORE_URL;
+    };
+
+    function showAlert(msg) {
+      $("alertBox").textContent = msg;
+      $("alertBox").classList.add("show");
+      setTimeout(() => $("alertBox").classList.remove("show"), 2600);
+    }
+
+    init();
+  </script>
+</body>
+</html>
