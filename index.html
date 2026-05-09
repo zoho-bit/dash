@@ -3,373 +3,826 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>REALSELER • User Dashboard</title>
+  <title>REALSELER • Dashboard </title>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { min-height: 100vh; padding: 18px; background: linear-gradient(135deg, #020617, #111827 48%, #312e81); color: #0f172a; }
-    .page { max-width: 1200px; min-height: calc(100vh - 36px); margin: auto; display: grid; grid-template-columns: 410px 1fr; background: #f8fafc; border-radius: 30px; overflow: hidden; box-shadow: 0 32px 95px rgba(0,0,0,.45); }
-    .visual { position: relative; min-height: 760px; overflow: hidden; background: #0f172a; }
-    .visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(2,6,23,.04), rgba(2,6,23,.9)); z-index: 2; }
-    .image-track { display: grid; gap: 16px; padding: 16px; animation: autoScroll 24s linear infinite; }
-    .image-track img { width: 100%; height: 245px; object-fit: cover; border-radius: 24px; box-shadow: 0 16px 40px rgba(0,0,0,.28); }
-    @keyframes autoScroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-    .visual-content { position: absolute; left: 24px; right: 24px; bottom: 28px; z-index: 3; color: white; }
-    .visual-content h1 { font-size: 2.1rem; line-height: 1.08; margin-bottom: 12px; letter-spacing: 0; }
-    .visual-content p { color: #cbd5e1; line-height: 1.55; font-weight: 650; }
-    .content { padding: 28px; background: radial-gradient(circle at top right, rgba(79,70,229,.14), transparent 34%), #f8fafc; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
-    .brand { font-size: 1.75rem; font-weight: 950; color: #4f46e5; }
-    .live { padding: 9px 13px; border-radius: 999px; background: #dcfce7; color: #166534; font-size: .82rem; font-weight: 900; border: 1px solid #bbf7d0; }
-    .card { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 22px; margin-bottom: 18px; box-shadow: 0 14px 38px rgba(15,23,42,.08); }
-    h2 { color: #111827; font-size: 1.28rem; margin-bottom: 8px; }
-    .muted { color: #64748b; line-height: 1.55; font-weight: 650; font-size: .94rem; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
-    label { display: block; color: #334155; font-size: .86rem; font-weight: 850; margin-bottom: 7px; }
-    input { width: 100%; border: 2px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 15px; outline: none; font-size: 1rem; }
-    input:focus { border-color: #4f46e5; background: white; box-shadow: 0 0 0 4px rgba(79,70,229,.12); }
-    .actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
-    button { border: none; border-radius: 999px; padding: 15px 18px; font-weight: 950; cursor: pointer; color: white; background: linear-gradient(90deg, #4f46e5, #ec4899); box-shadow: 0 12px 26px rgba(79,70,229,.26); flex: 1; min-width: 140px; }
-    button.secondary { background: white; color: #4f46e5; border: 2px solid #4f46e5; box-shadow: none; }
-    button.good { background: linear-gradient(90deg, #16a34a, #14b8a6); }
-    .status-card { display: none; }
-    .status-pill { width: fit-content; padding: 9px 15px; border-radius: 999px; font-weight: 950; background: #fef3c7; color: #92400e; margin-bottom: 16px; }
-    .status-pill.verified { background: #dcfce7; color: #166534; }
-    .status-pill.rejected { background: #fee2e2; color: #991b1b; }
-    .status-pill.created { background: #dbeafe; color: #1d4ed8; }
-    .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-    .info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 13px; min-width: 0; }
-    .info b { display: block; color: #4f46e5; font-size: 1rem; margin-bottom: 4px; word-break: break-word; }
-    .info span { color: #64748b; font-size: .76rem; font-weight: 850; }
-    .message { background: #eef2ff; border: 1px solid #dbeafe; color: #334155; border-radius: 16px; padding: 14px; line-height: 1.55; font-weight: 700; margin-bottom: 14px; }
-    .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
-    .step { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 15px; padding: 12px; color: #64748b; font-weight: 850; font-size: .82rem; text-align: center; }
-    .step.active { color: #4f46e5; border-color: #c7d2fe; background: #eef2ff; }
-    .step.done { color: #166534; border-color: #bbf7d0; background: #dcfce7; }
-    pre { display: none; margin-top: 14px; background: #0f172a; color: #e2e8f0; border-radius: 18px; padding: 16px; white-space: pre-wrap; word-break: break-word; line-height: 1.55; max-height: 320px; overflow: auto; }
-    .raw-data { display: block; background: #020617; }
-    .alert { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.88); background: linear-gradient(135deg, #ef4444, #ec4899); color: white; padding: 18px 24px; border-radius: 18px; font-weight: 950; opacity: 0; pointer-events: none; transition: .25s; z-index: 99; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.32); }
-    .alert.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    @media (max-width: 920px) {
-      .page { grid-template-columns: 1fr; }
-      .visual { min-height: 290px; }
-      .image-track { display: flex; width: max-content; animation: sideScroll 24s linear infinite; }
-      .image-track img { width: 265px; height: 235px; }
-      @keyframes sideScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-      .form-grid, .info-grid, .timeline { grid-template-columns: 1fr; }
-      .content { padding: 18px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
+    :root {
+      --bg: #050712;
+      --panel: rgba(255, 255, 255, 0.09);
+      --panel-strong: rgba(255, 255, 255, 0.14);
+      --line: rgba(255, 255, 255, 0.18);
+      --text: #f8fafc;
+      --muted: #aab7cf;
+      --a: #5eead4;
+      --b: #8b5cf6;
+      --c: #ec4899;
+      --d: #38bdf8;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(94, 234, 212, 0.28), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(236, 72, 153, 0.26), transparent 30%),
+        radial-gradient(circle at 50% 92%, rgba(139, 92, 246, 0.32), transparent 36%),
+        linear-gradient(135deg, #020617, #070b1a 48%, #160f33);
+      overflow-x: hidden;
+      padding: 18px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(rgba(255,255,255,.9) 1px, transparent 1.4px),
+        radial-gradient(rgba(94,234,212,.9) 1px, transparent 1.5px),
+        radial-gradient(rgba(236,72,153,.7) 1px, transparent 1.5px);
+      background-size: 42px 42px, 92px 92px, 150px 150px;
+      opacity: .32;
+      animation: starFlow 38s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes starFlow {
+      from { background-position: 0 0, 20px 30px, 40px 10px; }
+      to { background-position: 260px 320px, 180px 260px, 300px 180px; }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
+      margin: 0 auto;
+      min-height: calc(100vh - 36px);
+      display: grid;
+      grid-template-columns: 92px 1fr 360px;
+      gap: 18px;
+    }
+
+    .nav {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      backdrop-filter: blur(22px);
+      padding: 16px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+    }
+
+    .mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--a), var(--b), var(--c));
+      font-size: 1.4rem;
+      font-weight: 950;
+      box-shadow: 0 0 30px rgba(94,234,212,.32);
+    }
+
+    .nav button {
+      width: 54px;
+      height: 54px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.08);
+      color: white;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: .25s;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, rgba(94,234,212,.28), rgba(139,92,246,.28));
+      box-shadow: 0 0 28px rgba(94,234,212,.22);
+    }
+
+    .main {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 340px;
+      border-radius: 34px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.05)),
+        radial-gradient(circle at 80% 18%, rgba(94,234,212,.22), transparent 30%);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      padding: 30px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        conic-gradient(from 180deg, transparent, rgba(94,234,212,.2), transparent, rgba(236,72,153,.16), transparent);
+      animation: rotateGlow 15s linear infinite;
+      opacity: .55;
+    }
+
+    @keyframes rotateGlow {
+      to { transform: rotate(360deg); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+    }
+
+    .kicker {
+      width: fit-content;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: rgba(94,234,212,.12);
+      border: 1px solid rgba(94,234,212,.28);
+      color: #99f6e4;
+      font-weight: 950;
+      font-size: .82rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 5rem);
+      line-height: .94;
+      letter-spacing: 0;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #fff, var(--a), var(--d), var(--c));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 650;
+      font-size: 1.02rem;
+      max-width: 620px;
+    }
+
+    .hero-actions,
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 15px 19px;
+      min-width: 150px;
+      cursor: pointer;
+      color: white;
+      font-weight: 950;
+      background: linear-gradient(90deg, var(--a), var(--b), var(--c));
+      box-shadow: 0 16px 34px rgba(139,92,246,.28);
+      transition: .25s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 45px rgba(94,234,212,.22);
+    }
+
+    .btn.secondary {
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .orbit {
+      position: absolute;
+      right: 34px;
+      top: 42px;
+      width: 190px;
+      height: 190px;
+      border: 1px solid rgba(94,234,212,.22);
+      border-radius: 50%;
+      z-index: 1;
+      animation: orbitSpin 12s linear infinite;
+    }
+
+    .orbit::before,
+    .orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 22px var(--a);
+    }
+
+    .orbit::before {
+      width: 16px;
+      height: 16px;
+      top: 18px;
+      left: 36px;
+    }
+
+    .orbit::after {
+      width: 11px;
+      height: 11px;
+      right: 22px;
+      bottom: 34px;
+      box-shadow: 0 0 20px var(--c);
+    }
+
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      backdrop-filter: blur(22px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.25);
+    }
+
+    .stat {
+      padding: 18px;
+      min-height: 126px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.9rem;
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .service {
+      position: relative;
+      overflow: hidden;
+      min-height: 230px;
+      padding: 24px;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+    }
+
+    .service::after {
+      content: "";
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      right: -80px;
+      bottom: -90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(94,234,212,.28), transparent 64%);
+    }
+
+    .service h2 {
+      font-size: 1.45rem;
+      margin-bottom: 10px;
+    }
+
+    .service p {
+      color: var(--muted);
+      line-height: 1.58;
+      font-weight: 650;
+      margin-bottom: 18px;
+    }
+
+    .service .chip {
+      display: inline-flex;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--line);
+      color: #dbeafe;
+      font-weight: 900;
+      font-size: .78rem;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel h3 {
+      font-size: 1.18rem;
+      margin-bottom: 12px;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rule {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: #dbe4f5;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .visual-wall {
+      height: 490px;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+      position: relative;
+    }
+
+    .visual-track {
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+      animation: visualScroll 22s linear infinite;
+    }
+
+    .ai-card {
+      height: 180px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,.16);
+      background: #08111f;
+    }
+
+    .ai-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @keyframes visualScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(-50%); }
+    }
+
+    .clock-card {
+      padding: 22px;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(94,234,212,.12), rgba(139,92,246,.12));
+      backdrop-filter: blur(22px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.26);
+    }
+
+    .clock-card b {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .clock-card span {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .support {
+      padding: 24px;
+      border-radius: 30px;
+      border: 1px solid rgba(94,234,212,.22);
+      background: linear-gradient(135deg, rgba(94,234,212,.14), rgba(236,72,153,.14));
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+    }
+
+    .support h3 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+    }
+
+    .support p {
+      color: var(--muted);
+      line-height: 1.58;
+      font-weight: 650;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(2,6,23,.76);
+      backdrop-filter: blur(16px);
+      z-index: 50;
+    }
+
+    .modal.show {
+      display: grid;
+    }
+
+    .modal-box {
+      width: min(520px, 100%);
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(94,234,212,.16), transparent 32%),
+        rgba(15,23,42,.94);
+      box-shadow: 0 32px 100px rgba(0,0,0,.45);
+      padding: 24px;
+      animation: pop .25s ease forwards;
+    }
+
+    @keyframes pop {
+      from { transform: scale(.94) translateY(10px); opacity: .5; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal-top h3 {
+      font-size: 1.3rem;
+    }
+
+    .close {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 14px 18px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 950;
+      background: linear-gradient(90deg, var(--b), var(--c));
+      box-shadow: 0 18px 40px rgba(0,0,0,.34);
+      transition: .25s;
+      z-index: 80;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1080px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        flex-direction: row;
+        justify-content: center;
+        border-radius: 24px;
+      }
+
+      .side {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .visual-wall {
+        height: 360px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      body {
+        padding: 10px;
+      }
+
+      .hero {
+        padding: 22px;
+        border-radius: 26px;
+      }
+
+      .orbit {
+        display: none;
+      }
+
+      .stats,
+      .services,
+      .side {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        gap: 8px;
+      }
+
+      .nav button,
+      .mark {
+        width: 48px;
+        height: 48px;
+        border-radius: 17px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .visual-wall {
+        height: 300px;
+      }
+
+      .ai-card {
+        height: 150px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <aside class="visual">
-      <div class="image-track" id="imageTrack"></div>
-      <div class="visual-content">
-        <h1>Professional Order Dashboard</h1>
-        <p>Track your order using UTR or Order ID. Data is checked from both connected stores.</p>
-      </div>
-    </aside>
+  <div class="shell">
+    <nav class="nav">
+      <div class="mark">R</div>
+      <button class="active" onclick="scrollToTop()" title="Home">⌂</button>
+      <button onclick="openNormalIds()" title="Normal IDs">N</button>
+      <button onclick="openVerifyIds()" title="Verify IDs">V</button>
+      <button onclick="openPolicy()" title="Policy">§</button>
+      <button onclick="openSupport()" title="Support">?</button>
+    </nav>
 
-    <main class="content">
-      <div class="topbar">
-        <div class="brand">REALSELER</div>
-        <div class="live" id="liveBadge">Connecting...</div>
-      </div>
+    <main class="main">
+      <section class="hero" id="top">
+        <div class="orbit"></div>
+        <div class="hero-inner">
+          <div class="kicker"> DASHBOARD  • LIVE SERVICE</div>
+          <h1><span class="gradient-text">REALSELER</span><br>Command Center</h1>
+          <p>
+            Ek advanced, clean aur premium user dashboard jahan se customer direct service select kar sakta hai,
+            support open kar sakta hai, aur policy details ek professional interface me dekh sakta hai.
+          </p>
 
-      <section class="card">
-        <h2>User Dashboard</h2>
-        <p class="muted">Order ID ya 12 digit UTR enter karo. Dashboard dono APIs se data check karega.</p>
-
-        <div class="form-grid">
-          <div>
-            <label>Order ID</label>
-            <input id="orderIdInput" type="text" placeholder="Example: -Nx123abc..." />
+          <div class="hero-actions">
+            <button class="btn" onclick="openNormalIds()">Normal IDs</button>
+            <button class="btn" onclick="openVerifyIds()">Verify IDs</button>
+            <button class="btn secondary" onclick="openSupport()">Support</button>
           </div>
-          <div>
-            <label>12 Digit UTR</label>
-            <input id="utrInput" type="text" maxlength="12" inputmode="numeric" placeholder="123456789012" />
-          </div>
-        </div>
-
-        <div class="actions">
-          <button onclick="checkOrder()">Track Order</button>
-          <button class="secondary" onclick="clearResult()">Clear</button>
-          <button class="secondary" onclick="openNormalIds()">Normal IDs</button>
-          <button class="secondary" onclick="openVerifyIds()">Verify IDs</button>
         </div>
       </section>
 
-      <section class="card status-card" id="statusBox">
-        <div class="status-pill" id="statusPill">PENDING</div>
-
-        <div class="info-grid">
-          <div class="info"><b id="sourceText">-</b><span>Source</span></div>
-          <div class="info"><b id="orderIdText">-</b><span>Order ID</span></div>
-          <div class="info"><b id="qtyText">0</b><span>Quantity</span></div>
-          <div class="info"><b id="amountText">₹0</b><span>Amount</span></div>
-          <div class="info"><b id="utrText">-</b><span>UTR</span></div>
-          <div class="info"><b id="dateText">-</b><span>Date</span></div>
-          <div class="info"><b id="timeText">-</b><span>Time</span></div>
-          <div class="info"><b id="updatedText">-</b><span>Updated</span></div>
-        </div>
-
-        <div class="timeline">
-          <div class="step" id="stepCreated">Created</div>
-          <div class="step" id="stepPending">Pending</div>
-          <div class="step" id="stepVerified">Verified</div>
-          <div class="step" id="stepDelivered">Delivered</div>
-        </div>
-
-        <div class="message" id="messageText">Payment verification pending hai.</div>
-        <pre id="deliveryText"></pre>
-
-        <div class="actions">
-          <button id="copyBtn" onclick="copyDelivery()" style="display:none">Copy Delivery</button>
-          <button class="good" onclick="downloadReceipt()">Download Receipt</button>
-          <button class="secondary" onclick="copyOrderId()">Copy Order ID</button>
-          <button class="secondary" onclick="openWhatsApp()">Contact Support</button>
-        </div>
-
-        <pre class="raw-data" id="rawData"></pre>
+      <section class="stats">
+        <div class="stat"><b>Live</b><span>Service dashboard active and ready</span></div>
+        <div class="stat"><b>Fast</b><span>One tap navigation for both services</span></div>
+        <div class="stat"><b>Secure</b><span>Policy-first customer support flow</span></div>
+       <!-- <div class="stat"><b>2050</b><span>Future UI with premium motion design</span></div>-->
       </section>
 
-      <section class="card">
-        <h2>Replacement Policy</h2>
-        <p class="muted" id="policyText">Replacement request valid only within policy time. Keep Order ID and UTR ready while contacting support.</p>
+      <section class="services">
+        <div class="service">
+          <span class="chip">NORMAL SERVICE</span>
+          <h2>Normal IDs</h2>
+          <p>Fast access ke liye Normal IDs store open karo. Clean checkout aur support ready flow.</p>
+          <div class="actions">
+            <button class="btn" onclick="openNormalIds()">Open Normal IDs</button>
+          </div>
+        </div>
+
+        <div class="service">
+          <span class="chip">VERIFY SERVICE</span>
+          <h2>Verify IDs</h2>
+          <p>Verified flow ke liye Verify IDs store open karo. Premium interface aur quick help access.</p>
+          <div class="actions">
+            <button class="btn" onclick="openVerifyIds()">Open Verify IDs</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Smart User Guidelines</h3>
+        <div class="rule-list">
+          <div class="rule">Payment proof, UTR aur order details support ke liye ready rakho.</div>
+          <div class="rule">Delivery ke turant baad password change ya multiple device sync avoid karo.</div>
+          <div class="rule">Same IP par bahut saare accounts use karne se issue aa sakta hai.</div>
+          <div class="rule">Pending payment 30 minutes se zyada ho to support ko message karo.</div>
+        </div>
       </section>
     </main>
+
+    <aside class="side">
+      <section class="visual-wall">
+        <div class="visual-track" id="visualTrack"></div>
+      </section>
+
+      <section class="clock-card">
+        <b id="clock">--:--</b>
+        <span id="dateText">Loading date...</span>
+      </section>
+
+      <section class="support">
+        <h3>AI Support Dock</h3>
+        <p>Help chahiye to support open karo. Message me order detail, payment proof aur UTR bhejna fastest rahega.</p>
+        <div class="actions">
+          <button class="btn" onclick="openSupport()">Open Support</button>
+        </div>
+      </section>
+    </aside>
   </div>
 
-  <div class="alert" id="alertBox"></div>
+  <div class="modal" id="policyModal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <h3>Replacement Policy</h3>
+        <button class="close" onclick="closeModals()">×</button>
+      </div>
+      <div class="rule-list">
+        <div class="rule">Replacement sirf policy time ke andar valid hoga.</div>
+        <div class="rule">Payment proof, UTR aur order proof required ho sakta hai.</div>
+        <div class="rule">Wrong usage, password change, multiple device login par replacement reject ho sakta hai.</div>
+        <div class="rule">Support final verification ke baad hi replacement process karega.</div>
+      </div>
+    </div>
+  </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+  <div class="modal" id="supportModal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <h3>Support Center</h3>
+        <button class="close" onclick="closeModals()">×</button>
+      </div>
+      <p style="color: var(--muted); line-height: 1.6; font-weight: 700; margin-bottom: 16px;">
+        WhatsApp support open karo aur apni detail bhejo. Faster help ke liye UTR, payment screenshot aur order detail ready rakho.
+      </p>
+      <div class="actions">
+        <button class="btn" onclick="openWhatsApp()">Open WhatsApp</button>
+        <button class="btn secondary" onclick="closeModals()">Close</button>
+      </div>
+    </div>
+  </div>
 
-    const CONFIG_URLS = [
-      { name: "Normal Store", url: "https://tmn.sawanenter7209.workers.dev/config" },
-      { name: "Verify Store", url: "https://ohn.sawanenter7209.workers.dev/config" }
-    ];
+  <div class="toast" id="toast">Done</div>
 
+  <script>
     const NORMAL_IDS_URL = "https://nira.sawanenter7209.workers.dev/";
     const VERIFY_IDS_URL = "https://vir.sawanenter7209.workers.dev/";
-
-    let stores = [];
-    let whatsappNumber = "84947229295";
-    let currentOrder = null;
+    const WHATSAPP_NUMBER = "84947229295";
 
     const $ = (id) => document.getElementById(id);
 
-    function aiImage(title, a, b, c) {
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620"><defs><filter id="blur"><feGaussianBlur stdDeviation="35"/></filter></defs><rect width="900" height="620" fill="#08111f"/><circle cx="165" cy="130" r="160" fill="${a}" opacity=".58" filter="url(#blur)"/><circle cx="760" cy="210" r="185" fill="${b}" opacity=".56" filter="url(#blur)"/><circle cx="460" cy="520" r="180" fill="${c}" opacity=".42" filter="url(#blur)"/><rect x="80" y="95" width="740" height="430" rx="38" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.32)"/><rect x="125" y="145" width="310" height="44" rx="22" fill="rgba(255,255,255,.84)"/><rect x="125" y="220" width="650" height="26" rx="13" fill="rgba(255,255,255,.34)"/><rect x="125" y="270" width="560" height="26" rx="13" fill="rgba(255,255,255,.24)"/><rect x="125" y="340" width="190" height="100" rx="24" fill="rgba(255,255,255,.18)"/><rect x="355" y="340" width="190" height="100" rx="24" fill="rgba(255,255,255,.18)"/><rect x="585" y="340" width="190" height="100" rx="24" fill="rgba(255,255,255,.18)"/><text x="125" y="182" fill="#0f172a" font-size="26" font-weight="900">${title}</text></svg>`;
+    function aiImage(title, sub, a, b, c) {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540">
+          <defs>
+            <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
+            <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="${a}" offset="0"/>
+              <stop stop-color="${b}" offset=".55"/>
+              <stop stop-color="${c}" offset="1"/>
+            </linearGradient>
+          </defs>
+          <rect width="900" height="540" fill="#07111f"/>
+          <circle cx="170" cy="120" r="150" fill="${a}" opacity=".48" filter="url(#blur)"/>
+          <circle cx="720" cy="170" r="190" fill="${b}" opacity=".42" filter="url(#blur)"/>
+          <circle cx="450" cy="500" r="210" fill="${c}" opacity=".34" filter="url(#blur)"/>
+          <rect x="70" y="70" width="760" height="400" rx="42" fill="rgba(255,255,255,.10)" stroke="url(#stroke)" stroke-width="2"/>
+          <rect x="120" y="120" width="280" height="42" rx="21" fill="rgba(255,255,255,.88)"/>
+          <rect x="120" y="204" width="640" height="26" rx="13" fill="rgba(255,255,255,.30)"/>
+          <rect x="120" y="252" width="520" height="26" rx="13" fill="rgba(255,255,255,.20)"/>
+          <rect x="120" y="328" width="170" height="78" rx="22" fill="rgba(255,255,255,.16)"/>
+          <rect x="330" y="328" width="170" height="78" rx="22" fill="rgba(255,255,255,.16)"/>
+          <rect x="540" y="328" width="220" height="78" rx="22" fill="rgba(255,255,255,.16)"/>
+          <text x="120" y="151" fill="#0f172a" font-size="25" font-weight="900">${title}</text>
+          <text x="120" y="292" fill="#dbeafe" font-size="22" font-weight="800">${sub}</text>
+        </svg>`;
       return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
     }
 
-    function loadImages() {
+    function loadVisuals() {
       const images = [
-        aiImage("Secure Tracking", "#4f46e5", "#ec4899", "#22d3ee"),
-        aiImage("Payment Status", "#0ea5e9", "#10b981", "#8b5cf6"),
-        aiImage("Fast Support", "#f97316", "#ef4444", "#14b8a6"),
-        aiImage("Live Dashboard", "#7c3aed", "#db2777", "#38bdf8")
+        aiImage("2050 Dashboard", "Premium interface", "#5eead4", "#8b5cf6", "#ec4899"),
+        aiImage("Service Hub", "Normal and Verify", "#38bdf8", "#10b981", "#8b5cf6"),
+        aiImage("Support Dock", "Fast help access", "#f97316", "#ec4899", "#14b8a6"),
+        aiImage("Policy Core", "Clean user rules", "#7c3aed", "#0ea5e9", "#f43f5e")
       ];
-      $("imageTrack").innerHTML = [...images, ...images].map(src => `<img src="${src}" alt="AI dashboard visual">`).join("");
+
+      $("visualTrack").innerHTML = [...images, ...images]
+        .map(src => `<div class="ai-card"><img src="${src}" alt="Future dashboard visual"></div>`)
+        .join("");
     }
 
-    async function init() {
-      loadImages();
-
-      const results = await Promise.allSettled(CONFIG_URLS.map(async (item, index) => {
-        const res = await fetch(item.url, { cache: "no-store" });
-        if (!res.ok) throw new Error(item.name + " config failed");
-        const config = await res.json();
-        const app = initializeApp(config, "store_" + index);
-        const db = getDatabase(app);
-        return { ...item, db };
-      }));
-
-      stores = results.filter(r => r.status === "fulfilled").map(r => r.value);
-      $("liveBadge").textContent = stores.length + " API Connected";
-
-      stores.forEach(store => {
-        onValue(ref(store.db, "settings"), (snap) => {
-          const s = snap.val() || {};
-          whatsappNumber = s.whatsappNumber || s.supportNumber || whatsappNumber;
-          const replacementTime = s.replacementTime || "11:05 AM";
-          $("policyText").textContent = "Replacement Policy : " + replacementTime + ". Keep Order ID and UTR ready while contacting support.";
-        });
+    function updateClock() {
+      const now = new Date();
+      $("clock").textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      $("dateText").textContent = now.toLocaleDateString([], {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
       });
-
-      if (!stores.length) {
-        $("liveBadge").textContent = "Connection Failed";
-        showAlert("Dono API connect nahi hui");
-      }
     }
 
-    window.checkOrder = async function () {
-      const orderId = $("orderIdInput").value.trim();
-      const utr = $("utrInput").value.trim();
-
-      if (!orderId && !utr) return showAlert("Order ID ya UTR enter karo");
-      if (utr && !/^\\d{12}$/.test(utr)) return showAlert("UTR exactly 12 digits hona chahiye");
-      if (!stores.length) return showAlert("API connected nahi hai");
-
-      showAlert("Searching both stores...");
-      let found = null;
-
-      for (const store of stores) {
-        if (orderId) {
-          const snap = await get(ref(store.db, "orders/" + orderId));
-          if (snap.exists()) {
-            found = { source: store.name, orderId, data: snap.val() };
-            break;
-          }
-        }
-
-        if (utr) {
-          const snap = await get(ref(store.db, "orders"));
-          const orders = snap.val() || {};
-          for (const [key, value] of Object.entries(orders)) {
-            if (String(value.utr || "") === utr) {
-              found = { source: store.name, orderId: value.orderId || key, data: value };
-              break;
-            }
-          }
-        }
-
-        if (found) break;
-      }
-
-      if (!found) {
-        $("statusBox").style.display = "none";
-        return showAlert("Order not found");
-      }
-
-      renderOrder(found);
-    };
-
-    function setTimeline(status, hasDelivery) {
-      ["stepCreated", "stepPending", "stepVerified", "stepDelivered"].forEach(id => $("step" + id.replace("step", "")).className = "step");
-      $("stepCreated").classList.add("done");
-
-      if (status === "created") {
-        $("stepCreated").classList.add("active");
-      } else if (status === "pending") {
-        $("stepPending").classList.add("active");
-      } else if (status === "verified") {
-        $("stepPending").classList.add("done");
-        $("stepVerified").classList.add("done", "active");
-        if (hasDelivery) $("stepDelivered").classList.add("done", "active");
-      } else if (status === "rejected") {
-        $("stepPending").classList.add("active");
-      }
+    function showToast(text) {
+      $("toast").textContent = text;
+      $("toast").classList.add("show");
+      setTimeout(() => $("toast").classList.remove("show"), 2200);
     }
 
-    function renderOrder(found) {
-      const order = found.data || {};
-      const status = order.status || "created";
-      const dateObj = order.time ? new Date(order.time) : null;
-      const updatedAt = order.verifiedAt || order.rejectedAt || order.updatedAt || order.time;
-      const delivered = order.deliveredText || "";
-
-      currentOrder = { source: found.source, orderId: found.orderId, ...order };
-
-      $("statusBox").style.display = "block";
-      $("statusPill").textContent = status.toUpperCase();
-      $("statusPill").className = "status-pill " + status;
-
-      $("sourceText").textContent = found.source;
-      $("orderIdText").textContent = found.orderId || order.orderId || "-";
-      $("qtyText").textContent = order.qty || 0;
-      $("amountText").textContent = "₹" + (order.amount || 0);
-      $("utrText").textContent = order.utr || "-";
-      $("dateText").textContent = dateObj ? dateObj.toLocaleDateString() : "-";
-      $("timeText").textContent = dateObj ? dateObj.toLocaleTimeString() : "-";
-      $("updatedText").textContent = updatedAt ? new Date(updatedAt).toLocaleString() : "-";
-
-      $("deliveryText").style.display = "none";
-      $("copyBtn").style.display = "none";
-
-      if (status === "created") {
-        $("messageText").textContent = "Order created hai. Payment submit hone ke baad verification start hoga.";
-      } else if (status === "pending") {
-        $("messageText").textContent = "Payment verification pending hai. Please wait.";
-      } else if (status === "verified") {
-        $("messageText").textContent = "Payment verified. Delivery details niche available hain.";
-        $("deliveryText").textContent = delivered || "Delivered. Agar empty dikhe to support se contact karo.";
-        $("deliveryText").style.display = "block";
-        $("copyBtn").style.display = "block";
-      } else if (status === "rejected") {
-        $("messageText").textContent = "Payment rejected / not matched. Support ko UTR ke saath contact karo.";
-      } else {
-        $("messageText").textContent = "Current status: " + status;
-      }
-
-      setTimeline(status, Boolean(delivered));
-      $("rawData").textContent = JSON.stringify(currentOrder, null, 2);
-      $("statusBox").scrollIntoView({ behavior: "smooth", block: "start" });
+    function openNormalIds() {
+      showToast("Opening Normal IDs...");
+      setTimeout(() => window.location.href = NORMAL_IDS_URL, 450);
     }
 
-    window.copyDelivery = function () {
-      navigator.clipboard.writeText($("deliveryText").textContent).then(() => showAlert("Copied successfully")).catch(() => showAlert("Copy failed"));
-    };
-
-    window.copyOrderId = function () {
-      if (!currentOrder?.orderId) return showAlert("Order ID not found");
-      navigator.clipboard.writeText(currentOrder.orderId).then(() => showAlert("Order ID copied"));
-    };
-
-    window.downloadReceipt = function () {
-      if (!currentOrder) return showAlert("Pehle order track karo");
-      const text = [
-        "REALSELER ORDER RECEIPT",
-        "Source: " + (currentOrder.source || "-"),
-        "Order ID: " + (currentOrder.orderId || "-"),
-        "Status: " + (currentOrder.status || "-"),
-        "Quantity: " + (currentOrder.qty || 0),
-        "Amount: ₹" + (currentOrder.amount || 0),
-        "UTR: " + (currentOrder.utr || "-"),
-        "Time: " + (currentOrder.time ? new Date(currentOrder.time).toLocaleString() : "-"),
-        "",
-        "Delivery:",
-        currentOrder.deliveredText || "-"
-      ].join("\\n");
-
-      const blob = new Blob([text], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "realseler-receipt.txt";
-      link.click();
-      URL.revokeObjectURL(link.href);
-    };
-
-    window.openWhatsApp = function () {
-      window.open(`https://wa.me/${whatsappNumber}?text=Hello REALSELER Support, mujhe order status help chahiye.`, "_blank");
-    };
-
-    window.clearResult = function () {
-      $("orderIdInput").value = "";
-      $("utrInput").value = "";
-      $("statusBox").style.display = "none";
-      currentOrder = null;
-    };
-
-    window.openNormalIds = function () {
-      window.location.href = NORMAL_IDS_URL;
-    };
-
-    window.openVerifyIds = function () {
-      window.location.href = VERIFY_IDS_URL;
-    };
-
-    function showAlert(msg) {
-      $("alertBox").textContent = msg;
-      $("alertBox").classList.add("show");
-      setTimeout(() => $("alertBox").classList.remove("show"), 2400);
+    function openVerifyIds() {
+      showToast("Opening Verify IDs...");
+      setTimeout(() => window.location.href = VERIFY_IDS_URL, 450);
     }
 
-    init();
+    function openWhatsApp() {
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Hello REALSELER Support, mujhe help chahiye.`, "_blank");
+    }
+
+    function openPolicy() {
+      $("policyModal").classList.add("show");
+    }
+
+    function openSupport() {
+      $("supportModal").classList.add("show");
+    }
+
+    function closeModals() {
+      $("policyModal").classList.remove("show");
+      $("supportModal").classList.remove("show");
+    }
+
+    function scrollToTop() {
+      $("top").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.querySelectorAll(".modal").forEach(modal => {
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeModals();
+      });
+    });
+
+    loadVisuals();
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
